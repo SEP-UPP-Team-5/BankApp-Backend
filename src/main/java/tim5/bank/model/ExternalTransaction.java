@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 public class ExternalTransaction {
 
     @Id
-    @SequenceGenerator(name = "it_sequence_generator", sequenceName = "it_sequence", initialValue = 100, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "it_sequence_generator")
+    @SequenceGenerator(name = "et_sequence_generator", sequenceName = "et_sequence", initialValue = 100, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "et_sequence_generator")
     @Column(name = "id", unique = true)
     private Long id;    // acquirerOrderId
 
