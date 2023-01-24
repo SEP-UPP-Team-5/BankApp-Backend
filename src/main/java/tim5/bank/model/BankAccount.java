@@ -1,9 +1,17 @@
 package tim5.bank.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "bankAccount")
 public class BankAccount {
@@ -18,7 +26,7 @@ public class BankAccount {
     private String panNumber;
 
     @Column(name = "security_code")
-    private double securityCode;
+    private String securityCode;
 
     @Column(name = "card_holder_name")
     private String cardHolderName;
@@ -31,4 +39,12 @@ public class BankAccount {
 
     @Column(name = "reserved_funds")
     private double reservedFunds;
+
+    public boolean reserveFunds(double amount){
+        if(balance<amount)
+            return false;
+        balance -= amount;
+        reservedFunds += amount;
+        return true;
+    }
 }

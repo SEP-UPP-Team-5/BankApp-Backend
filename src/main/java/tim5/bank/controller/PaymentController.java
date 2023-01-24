@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import tim5.bank.dto.CreatePaymentDto;
 import tim5.bank.dto.CreatePaymentResponseDto;
+import tim5.bank.dto.ExecutePaymentDto;
+import tim5.bank.dto.ExecutePaymentResponseDto;
 import tim5.bank.model.Payment;
 import tim5.bank.service.template.PaymentService;
 
@@ -31,6 +33,12 @@ public class PaymentController {
                     new CreatePaymentResponseDto("ZAVISI OD FRONTA", payment.getId());
             return new ResponseEntity<>(createPaymentResponseDto, HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/execute")
+    public ResponseEntity<ExecutePaymentResponseDto> executePayment(@RequestBody ExecutePaymentDto executePaymentDto){
+        ExecutePaymentResponseDto executePaymentResponseDto = new ExecutePaymentResponseDto(paymentService.execute(executePaymentDto));
+        return new ResponseEntity<>(executePaymentResponseDto, HttpStatus.OK);
     }
 
 }

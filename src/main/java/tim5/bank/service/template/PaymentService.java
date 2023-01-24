@@ -1,6 +1,7 @@
 package tim5.bank.service.template;
 
 import tim5.bank.dto.CreatePaymentDto;
+import tim5.bank.dto.ExecutePaymentDto;
 import tim5.bank.dto.UpdatePaymentDto;
 import tim5.bank.model.Payment;
 
@@ -13,5 +14,5 @@ public interface PaymentService {
     List<Payment> getAll();
     Payment update(UpdatePaymentDto updatePaymentDto);
     Payment delete(Long id);
-
+    String execute(ExecutePaymentDto executePaymentDto);
 }
