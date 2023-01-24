@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 public class Payment {
 
     @Id
-    @SequenceGenerator(name = "t_sequence_generator", sequenceName = "t_sequence", initialValue = 100, allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "t_sequence_generator")
+    @SequenceGenerator(name = "p_sequence_generator", sequenceName = "p_sequence", initialValue = 100, allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "p_sequence_generator")
     @Column(name = "id", unique = true)
     private Long id;
 
