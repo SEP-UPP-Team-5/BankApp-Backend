@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import tim5.bank.dto.ExecutePaymentDto;
+import tim5.bank.dto.FundsReservationRequestDto;
 import tim5.bank.model.BankAccount;
 import tim5.bank.repository.BankAccountRepository;
 import tim5.bank.service.template.BankAccountService;
@@ -61,8 +62,24 @@ public class BankAccountServiceImpl implements BankAccountService {
     }
 
     @Override
+    public boolean verifyInputData(FundsReservationRequestDto fundsReservationRequestDto) {
+        return bankAccountRepository.bankAccountValid(fundsReservationRequestDto.getCardHolderName(), fundsReservationRequestDto.getPAN(),
+                fundsReservationRequestDto.getSecurityCode(), fundsReservationRequestDto.getValidUntil());
+    }
+
+    @Override
     public boolean reserveAmount(Long bankAccountId, double amount) {
         BankAccount bankAccount = getById(bankAccountId);
+        if(bankAccount.reserveFunds(amount)){
+            update(bankAccount);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean reserveAmount(String panNumber, double amount) {
+        BankAccount bankAccount = getByPanNumber(panNumber);
         if(bankAccount.reserveFunds(amount)){
             update(bankAccount);
             return true;

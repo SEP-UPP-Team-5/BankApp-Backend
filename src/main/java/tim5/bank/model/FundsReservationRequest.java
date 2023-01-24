@@ -1,11 +1,19 @@
 package tim5.bank.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="funds_reservation_request")
 public class FundsReservationRequest {
@@ -17,7 +25,7 @@ public class FundsReservationRequest {
     private Long id;    // issuerOrderId
 
     @Column(name = "acquirer_order_id", unique = true)
-    private String acquirerOrderId;
+    private Long acquirerOrderId;
 
     @Column(name = "acquirer_timestamp")
     private LocalDateTime acquirerTimestamp;

@@ -161,6 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
             obj.put("securityCode", executePaymentDto.getSecurityCode());
             obj.put("cardHolderName", executePaymentDto.getCardHolderName());
             obj.put("validUntil", executePaymentDto.getValidUntil());
+            obj.put("amount", externalTransaction.getPayment().getAmount());
         } catch (JSONException e) {
             e.printStackTrace();
         }
