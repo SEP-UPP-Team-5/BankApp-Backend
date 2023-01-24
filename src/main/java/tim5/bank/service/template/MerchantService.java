@@ -8,6 +8,7 @@ public interface MerchantService {
 
     Merchant create(Merchant merchant);
     Merchant getById(Long id);
+    Merchant getByMerchantId(String merchantId);
     List<Merchant> getAll();
     Merchant update(Merchant merchant);
     Merchant delete(Long id);

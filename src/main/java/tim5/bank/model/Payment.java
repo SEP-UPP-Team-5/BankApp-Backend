@@ -1,11 +1,19 @@
 package tim5.bank.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="payment")
 public class Payment {
@@ -25,7 +33,7 @@ public class Payment {
     private double amount;
 
     @Column(name = "merchant_order_id")
-    private String merchantOrderId;
+    private Long merchantOrderId;
 
     @Column(name = "merchant_timestamp")
     private LocalDateTime merchantTimestamp;
