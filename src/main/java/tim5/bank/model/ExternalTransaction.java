@@ -1,9 +1,17 @@
 package tim5.bank.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="external_transaction")
 public class ExternalTransaction {
@@ -18,7 +26,7 @@ public class ExternalTransaction {
     private LocalDateTime acquirerTimestamp;
 
     @Column(name = "issuer_order_id", unique = true)
-    private String issuerOrderId;
+    private Long issuerOrderId;
 
     @Column(name = "issuer_timestamp")
     private LocalDateTime issuerTimestamp;
@@ -27,7 +35,7 @@ public class ExternalTransaction {
     private String panNumber;
 
     @Column(name = "security_code")
-    private double securityCode;
+    private String securityCode;
 
     @Column(name = "card_holder_name")
     private String cardHolderName;
