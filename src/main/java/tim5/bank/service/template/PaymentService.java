@@ -12,7 +12,7 @@ public interface PaymentService {
     Payment create(CreatePaymentDto createPaymentDto);
     Payment getById(Long id);
     List<Payment> getAll();
-    Payment update(UpdatePaymentDto updatePaymentDto);
+    Payment update(Payment payment);
     Payment delete(Long id);
     String execute(ExecutePaymentDto executePaymentDto);
 }
