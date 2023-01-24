@@ -16,7 +16,7 @@ public class ExternalTransactionServiceImpl implements ExternalTransactionServic
 
     @Override
     public ExternalTransaction create(ExternalTransaction externalTransaction) {
-        return null;
+        return externalTransactionRepository.save(externalTransaction);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class ExternalTransactionServiceImpl implements ExternalTransactionServic
 
     @Override
     public ExternalTransaction update(ExternalTransaction externalTransaction) {
-        return null;
+        return externalTransactionRepository.save(externalTransaction);
     }
 
     @Override
