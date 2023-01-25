@@ -19,6 +19,13 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public Merchant create(Merchant merchant) {
+        String merchantId;
+        do {
+            merchantId = getAlphaNumericString(30);
+        } while (merchantRepository.getMerchantByMerchantId(merchantId) != null);
+        
+        merchant.setMerchantId(merchantId);
+        merchant.setMerchantPassword(getAlphaNumericString(100));
         return merchantRepository.save(merchant);
     }
 
@@ -39,7 +46,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public Merchant update(Merchant merchant) {
-        return null;
+        return merchantRepository.save(merchant);
     }
 
     @Override
@@ -50,5 +57,32 @@ public class MerchantServiceImpl implements MerchantService {
     @Override
     public boolean verifyIdAndPassword(String merchantId, String merchantPassword) {
         return merchantRepository.getMerchantByMerchantIdAndMerchantPassword(merchantId, passwordEncoder.encode(merchantPassword)) != null;
+    }
+
+    static String getAlphaNumericString(int n)
+    {
+
+        // choose a Character random from this String
+        String AlphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                + "0123456789"
+                + "abcdefghijklmnopqrstuvxyz";
+
+        // create StringBuffer size of AlphaNumericString
+        StringBuilder sb = new StringBuilder(n);
+
+        for (int i = 0; i < n; i++) {
+
+            // generate a random number between
+            // 0 to AlphaNumericString variable length
+            int index
+                    = (int)(AlphaNumericString.length()
+                    * Math.random());
+
+            // add Character one by one in end of sb
+            sb.append(AlphaNumericString
+                    .charAt(index));
+        }
+
+        return sb.toString();
     }
 }
