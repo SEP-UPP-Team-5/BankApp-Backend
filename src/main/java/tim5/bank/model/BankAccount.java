@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -32,7 +34,7 @@ public class BankAccount {
     private String cardHolderName;
 
     @Column(name = "valid_until")
-    private LocalDateTime validUntil;
+    private LocalDate validUntil;
 
     @Column(name = "balance")
     private double balance;

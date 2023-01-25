@@ -17,4 +17,7 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Long> 
     @Query(value="SELECT * FROM bank_account where pan_number=:pan",nativeQuery = true)
     BankAccount getByPanNumber(@Param("pan")String panNumber);
 
+    @Query(value="SELECT * FROM bank_account where security_code=:code",nativeQuery = true)
+    BankAccount getBySecurityCode(@Param("code")String securityCode);
+
 }

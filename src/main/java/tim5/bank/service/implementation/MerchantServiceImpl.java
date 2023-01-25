@@ -19,12 +19,12 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public Merchant create(Merchant merchant) {
-        return null;
+        return merchantRepository.save(merchant);
     }
 
     @Override
     public Merchant getById(Long id) {
-        return null;
+        return merchantRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public List<Merchant> getAll() {
-        return null;
+        return merchantRepository.findAll();
     }
 
     @Override
@@ -43,8 +43,8 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public Merchant delete(Long id) {
-        return null;
+    public void delete(Long id) {
+         merchantRepository.deleteById(id);
     }
 
     @Override

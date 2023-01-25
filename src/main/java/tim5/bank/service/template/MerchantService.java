@@ -11,6 +11,6 @@ public interface MerchantService {
     Merchant getByMerchantId(String merchantId);
     List<Merchant> getAll();
     Merchant update(Merchant merchant);
-    Merchant delete(Long id);
+    void delete(Long id);
     boolean verifyIdAndPassword(String merchantId, String merchantPassword);
 }
