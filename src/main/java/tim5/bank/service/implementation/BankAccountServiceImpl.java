@@ -77,13 +77,13 @@ public class BankAccountServiceImpl implements BankAccountService {
 
     @Override
     public boolean verifyInputData(ExecutePaymentDto executePaymentDto) {
-        return bankAccountRepository.bankAccountValid(executePaymentDto.getCardHolderName(), executePaymentDto.getPAN(),
+        return bankAccountRepository.bankAccountValid(executePaymentDto.getCardHolderName(), executePaymentDto.getPan(),
                 executePaymentDto.getSecurityCode(), executePaymentDto.getValidUntil());
     }
 
     @Override
     public boolean verifyInputData(FundsReservationRequestDto fundsReservationRequestDto) {
-        return bankAccountRepository.bankAccountValid(fundsReservationRequestDto.getCardHolderName(), fundsReservationRequestDto.getPAN(),
+        return bankAccountRepository.bankAccountValid(fundsReservationRequestDto.getCardHolderName(), fundsReservationRequestDto.getPan(),
                 fundsReservationRequestDto.getSecurityCode(), fundsReservationRequestDto.getValidUntil());
     }
 

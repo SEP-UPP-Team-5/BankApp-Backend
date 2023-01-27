@@ -13,13 +13,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CreatePaymentDto {
 
-    private String MERCHANT_ID;
-    private String MERCHANT_PASSWORD;
-    private double AMOUNT;
-    private Long MERCHANT_ORDER_ID;
-    private LocalDateTime MERCHANT_TIMESTAMP;
-    private String SUCCESS_URL;
-    private String FAILED_URL;
-    private String ERROR_URL;
+    private String merchant_id;
+    private String merchant_password;
+    private double amount;
+    private Long merchant_order_id;
+    private LocalDateTime merchant_timestamp;
+    private String success_url;
+    private String failed_url;
+    private String error_url;
 
 }
