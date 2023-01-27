@@ -28,14 +28,14 @@ public class FundsReservationController {
     @PostMapping()
     public ResponseEntity<FundsReservationResponseDto> reserve(@RequestBody FundsReservationRequestDto fundsReservationRequestDto){
         FundsReservationResponseDto fundsReservationResponseDto =
-                new FundsReservationResponseDto(fundsReservationRequestDto.getACQUIRER_ORDER_ID(),
-                        fundsReservationRequestDto.getACQUIRER_TIMESTAMP(),null, null,
+                new FundsReservationResponseDto(fundsReservationRequestDto.getAcquirer_order_id(),
+                        fundsReservationRequestDto.getAcquirer_timestamp(),null, null,
                         "ERROR");
         if(bankAccountService.verifyInputData(fundsReservationRequestDto)){
             FundsReservationRequest fundsReservationRequest = fundsReservationRequestService.execute(fundsReservationRequestDto);
-            fundsReservationResponseDto.setISSUER_ORDER_ID(fundsReservationRequest.getId());
-            fundsReservationResponseDto.setISSUER_TIMESTAMP(fundsReservationRequest.getIssuerTimestamp());
-            fundsReservationResponseDto.setSTATUS(fundsReservationRequest.getStatus());
+            fundsReservationResponseDto.setIssuer_order_id(fundsReservationRequest.getId());
+            fundsReservationResponseDto.setIssuer_timestamp(fundsReservationRequest.getIssuerTimestamp());
+            fundsReservationResponseDto.setStatus(fundsReservationRequest.getStatus());
             return new ResponseEntity<>(fundsReservationResponseDto, HttpStatus.OK);
         }else{
             return new ResponseEntity<>(fundsReservationResponseDto, HttpStatus.BAD_REQUEST);

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ExecutePaymentDto {
 
-    private String PAN;
+    private String pan;
     private String securityCode;
     private String cardHolderName;
     private LocalDateTime validUntil;

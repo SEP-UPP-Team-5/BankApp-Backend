@@ -14,7 +14,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Autowired
     private MerchantRepository merchantRepository;
-    @Autowired(required = false)
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Override
@@ -56,7 +56,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public boolean verifyIdAndPassword(String merchantId, String merchantPassword) {
-        return merchantRepository.getMerchantByMerchantIdAndMerchantPassword(merchantId, passwordEncoder.encode(merchantPassword)) != null;
+        return merchantRepository.getMerchantByMerchantIdAndMerchantPassword(merchantId, merchantPassword) != null;
     }
 
     static String getAlphaNumericString(int n)

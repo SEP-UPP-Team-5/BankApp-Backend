@@ -13,12 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class FundsReservationRequestDto {
 
-    private Long ACQUIRER_ORDER_ID;
-    private LocalDateTime ACQUIRER_TIMESTAMP;
-    private String PAN;
+    private Long acquirer_order_id;
+    private LocalDateTime acquirer_timestamp;
+    private String pan;
     private String securityCode;
     private String cardHolderName;
     private LocalDateTime validUntil;
-
     private double amount;
 }

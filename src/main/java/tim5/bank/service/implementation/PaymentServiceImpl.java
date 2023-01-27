@@ -3,6 +3,7 @@ package tim5.bank.service.implementation;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import tim5.bank.model.*;
 import tim5.bank.repository.PaymentRepository;
 import tim5.bank.service.template.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,13 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment create(CreatePaymentDto createPaymentDto) {
-        if(!merchantService.verifyIdAndPassword(createPaymentDto.getMERCHANT_ID(), createPaymentDto.getMERCHANT_PASSWORD()))
+        if(!merchantService.verifyIdAndPassword(createPaymentDto.getMerchant_id(), createPaymentDto.getMerchant_password()))
             return null;
 
-        Merchant merchant = merchantService.getByMerchantId(createPaymentDto.getMERCHANT_ID());
-        return paymentRepository.save(new Payment(null, merchant, createPaymentDto.getAMOUNT(), createPaymentDto.getMERCHANT_ORDER_ID(),
-                createPaymentDto.getMERCHANT_TIMESTAMP(), createPaymentDto.getSUCCESS_URL(),
-                createPaymentDto.getFAILED_URL(), createPaymentDto.getERROR_URL(), "CREATED"));
+        Merchant merchant = merchantService.getByMerchantId(createPaymentDto.getMerchant_id());
+        return paymentRepository.save(new Payment(null, merchant, createPaymentDto.getAmount(), createPaymentDto.getMerchant_order_id(),
+                createPaymentDto.getMerchant_timestamp(), createPaymentDto.getSuccess_url(),
+                createPaymentDto.getFailed_url(), createPaymentDto.getError_url(), "CREATED"));
     }
 
     @Override
@@ -69,7 +71,7 @@ public class PaymentServiceImpl implements PaymentService {
         if(payment==null)
             return ERROR_URL;
 
-        if(bankAccountService.issuerBankSameAsAcquirer(executePaymentDto.getPAN())){
+        if(bankAccountService.issuerBankSameAsAcquirer(executePaymentDto.getPan())){
             return executeInternalTransaction(executePaymentDto, payment);
         }else{
             return executeExternalTransaction(executePaymentDto, payment);
@@ -82,7 +84,7 @@ public class PaymentServiceImpl implements PaymentService {
             updateStatus(payment, null, null, "ERROR");
             return payment.getErrorUrl();
         }
-        BankAccount bankAccount = bankAccountService.getByPanNumber(executePaymentDto.getPAN());
+        BankAccount bankAccount = bankAccountService.getByPanNumber(executePaymentDto.getPan());
         // create internal transaction
         InternalTransaction internalTransaction = internalTransactionService.create(
                 new InternalTransaction(null, LocalDateTime.now(), bankAccount, payment));
@@ -144,20 +146,20 @@ public class PaymentServiceImpl implements PaymentService {
 
     private ExternalTransaction serializeNewExternalTransaction(ExecutePaymentDto executePaymentDto, Payment payment) {
         return externalTransactionService.create(new ExternalTransaction(null, LocalDateTime.now(), null, null,
-                executePaymentDto.getPAN(), executePaymentDto.getSecurityCode(),
+                executePaymentDto.getPan(), executePaymentDto.getSecurityCode(),
                 executePaymentDto.getCardHolderName(), executePaymentDto.getValidUntil(), payment));
     }
 
-    private static ExternalTransactionPccResponse sendTransactionInfoToPcc(ExecutePaymentDto executePaymentDto, ExternalTransaction externalTransaction) {
+    private ExternalTransactionPccResponse sendTransactionInfoToPcc(ExecutePaymentDto executePaymentDto, ExternalTransaction externalTransaction) {
         // send it along form info to pcc
-        String pccUrl = "http://localhost:8082/orders/create"; // TODO: change to take from app properties probably
+        String pccUrl = "http://localhost:8090/paymentRequest";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject obj = new JSONObject();
         try {
-            obj.put("ACQUIRER_ORDER_ID", externalTransaction.getId());
-            obj.put("ACQUIRER_TIMESTAMP", externalTransaction.getAcquirerTimestamp());
-            obj.put("PAN", executePaymentDto.getPAN());
+            obj.put("acquirer_order_id", externalTransaction.getId());
+            obj.put("acquirer_timestamp", externalTransaction.getAcquirerTimestamp().toString());
+            obj.put("pan", executePaymentDto.getPan());
             obj.put("securityCode", executePaymentDto.getSecurityCode());
             obj.put("cardHolderName", executePaymentDto.getCardHolderName());
             obj.put("validUntil", executePaymentDto.getValidUntil());
@@ -167,39 +169,44 @@ public class PaymentServiceImpl implements PaymentService {
         }
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
-        return restTemplate.postForObject(pccUrl, request, ExternalTransactionPccResponse.class);
+        //try {
+            return restTemplate.postForObject(pccUrl, request, ExternalTransactionPccResponse.class);
+        //}catch (Exception e){
+        //    e.printStackTrace();
+         //   return null;
+        //}
     }
 
     private boolean checkExternalTransactionPccResponse(ExternalTransaction externalTransaction, ExternalTransactionPccResponse pccResponse) {
-        if(checkPccResponseFields(pccResponse) || pccResponse.getSTATUS().equals("ERROR"))
+        if(checkPccResponseFields(pccResponse) || pccResponse.getStatus().equals("ERROR"))
             return true;
 
-        if(!externalTransaction.getId().equals(pccResponse.getACQUIRER_ORDER_ID()) || externalTransaction.getAcquirerTimestamp() != pccResponse.getACQUIRER_TIMESTAMP())
+        if(!externalTransaction.getId().equals(pccResponse.getAcquirer_order_id()) || externalTransaction.getAcquirerTimestamp() != pccResponse.getAcquirer_timestamp())
             return true;
         return false;
     }
 
     private boolean checkPccResponseFields(ExternalTransactionPccResponse pccResponse) {
-        return pccResponse.getISSUER_ORDER_ID() == null ||
-                pccResponse.getISSUER_TIMESTAMP() == null ||
-                pccResponse.getACQUIRER_ORDER_ID() == null ||
-                pccResponse.getACQUIRER_TIMESTAMP() == null ||
-                pccResponse.getSTATUS() == null;
+        return pccResponse.getIssuer_order_id() == null ||
+                pccResponse.getAcquirer_timestamp() == null ||
+                pccResponse.getAcquirer_order_id() == null ||
+                pccResponse.getIssuer_timestamp() == null ||
+                pccResponse.getStatus() == null;
     }
 
     private String handleExternalTransactionPccResponseStatus(Payment payment, ExternalTransactionPccResponse pccResponse) {
-        if(pccResponse.getSTATUS().equals("SUCCESS")) {
-            updateStatus(payment, pccResponse.getACQUIRER_ORDER_ID(), pccResponse.getACQUIRER_TIMESTAMP(), "SUCCESS");
+        if(pccResponse.getStatus().equals("SUCCESS")) {
+            updateStatus(payment, pccResponse.getAcquirer_order_id(), pccResponse.getAcquirer_timestamp(), "SUCCESS");
             return payment.getSuccessUrl();
         }else{
-            updateStatus(payment, pccResponse.getACQUIRER_ORDER_ID(), pccResponse.getACQUIRER_TIMESTAMP(), "FAILED");
+            updateStatus(payment, pccResponse.getAcquirer_order_id(), pccResponse.getAcquirer_timestamp(), "FAILED");
             return payment.getFailedUrl();
         }
     }
 
     private void updateExternalTransactionWithDataFromExternalTransactionPccResponse(ExternalTransaction externalTransaction, ExternalTransactionPccResponse pccResponse) {
-        externalTransaction.setIssuerOrderId(pccResponse.getISSUER_ORDER_ID());
-        externalTransaction.setIssuerTimestamp(pccResponse.getISSUER_TIMESTAMP());
+        externalTransaction.setIssuerOrderId(pccResponse.getIssuer_order_id());
+        externalTransaction.setIssuerTimestamp(pccResponse.getIssuer_timestamp());
         externalTransactionService.update(externalTransaction);
     }
 

@@ -47,11 +47,11 @@ public class FundsReservationRequestServiceImpl implements FundsReservationReque
     @Override
     public FundsReservationRequest execute(FundsReservationRequestDto fundsReservationRequestDto) {
         FundsReservationRequest fundsReservationRequest = new FundsReservationRequest(null,
-                fundsReservationRequestDto.getACQUIRER_ORDER_ID(), fundsReservationRequestDto.getACQUIRER_TIMESTAMP(),
-                LocalDateTime.now(), bankAccountService.getByPanNumber(fundsReservationRequestDto.getPAN()),
+                fundsReservationRequestDto.getAcquirer_order_id(), fundsReservationRequestDto.getAcquirer_timestamp(),
+                LocalDateTime.now(), bankAccountService.getByPanNumber(fundsReservationRequestDto.getPan()),
                 fundsReservationRequestDto.getAmount(), "CREATED");
 
-        fundsReservationRequest.setStatus(bankAccountService.reserveAmount(fundsReservationRequestDto.getPAN(),
+        fundsReservationRequest.setStatus(bankAccountService.reserveAmount(fundsReservationRequestDto.getPan(),
                 fundsReservationRequestDto.getAmount()) ? "SUCCESS" : "FAILED");
         return create(fundsReservationRequest);
 
