@@ -4,29 +4,22 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.WriterException;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import jakarta.servlet.http.HttpServletResponse;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
-import tim5.bank.dto.BankAccountDto;
+import org.springframework.web.multipart.MultipartFile;
+import tim5.bank.dto.ExecutePaymentDto;
+import tim5.bank.dto.ExecutePaymentResponseDto;
 import tim5.bank.dto.QRCodeInputDto;
-import tim5.bank.model.BankAccount;
 import tim5.bank.service.template.QRCodeService;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -66,6 +59,12 @@ public class QRCodeController {
                 .ok()
                 .contentType(MediaType.IMAGE_PNG)
                 .body(bytes);
+    }
+
+    @PostMapping("/validator")
+    public ResponseEntity<String> validateQRCode(@RequestParam("image") MultipartFile file) throws IOException, NotFoundException {
+        String data = qrCodeService.validateQR(file);
+        return new ResponseEntity<>( data, HttpStatus.OK);
     }
 
 }
