@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value="/bankAccounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BankAccountController {
     @Autowired

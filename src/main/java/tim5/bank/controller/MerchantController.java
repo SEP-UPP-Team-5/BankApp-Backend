@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping(value="/merchants", produces = MediaType.APPLICATION_JSON_VALUE)
 
 public class MerchantController {
