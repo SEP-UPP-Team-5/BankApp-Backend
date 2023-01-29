@@ -2,6 +2,7 @@ package tim5.bank.controller;
 
 import com.google.zxing.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,22 @@ public class PaymentController {
 
     @Autowired
     private PaymentService paymentService;
-
     @Autowired
     private QRCodeService qrCodeService;
+    @Autowired
+    private Environment env;
 
-    @PostMapping
-    public ResponseEntity<CreatePaymentResponseDto> createPayment(@RequestBody CreatePaymentDto createPaymentDto){
+    @PostMapping("/{method}")
+    public ResponseEntity<CreatePaymentResponseDto> createPayment(@PathVariable("method") String method, @RequestBody CreatePaymentDto createPaymentDto){
         Payment payment = paymentService.create(createPaymentDto);
         System.out.println(LocalDateTime.now().toString());
         if(payment == null){
             return new ResponseEntity<>((CreatePaymentResponseDto) null, HttpStatus.BAD_REQUEST);
         }else{
             CreatePaymentResponseDto createPaymentResponseDto =
-                    new CreatePaymentResponseDto("ZAVISI OD FRONTA", payment.getId());
+                    new CreatePaymentResponseDto(env.getProperty("bank.frontend.host") + "/card/" + payment.getId(), payment.getId());
+            if(method.equals("qr"))
+                createPaymentResponseDto.setPAYMENT_URL(env.getProperty("bank.frontend.host") + "/qr/" + payment.getId());
             return new ResponseEntity<>(createPaymentResponseDto, HttpStatus.OK);
         }
     }

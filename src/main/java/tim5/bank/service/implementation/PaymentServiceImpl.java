@@ -36,13 +36,13 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment create(CreatePaymentDto createPaymentDto) {
-        if(!merchantService.verifyIdAndPassword(createPaymentDto.getMerchant_id(), createPaymentDto.getMerchant_password()))
+        if(!merchantService.verifyIdAndPassword(createPaymentDto.getMerchantId(), createPaymentDto.getMerchantPassword()))
             return null;
 
-        Merchant merchant = merchantService.getByMerchantId(createPaymentDto.getMerchant_id());
-        return paymentRepository.save(new Payment(null, merchant, createPaymentDto.getAmount(), createPaymentDto.getMerchant_order_id(),
-                createPaymentDto.getMerchant_timestamp(), createPaymentDto.getSuccess_url(),
-                createPaymentDto.getFailed_url(), createPaymentDto.getError_url(), "CREATED"));
+        Merchant merchant = merchantService.getByMerchantId(createPaymentDto.getMerchantId());
+        return paymentRepository.save(new Payment(null, merchant, createPaymentDto.getTotalAmount(), createPaymentDto.getOrderId(),
+                createPaymentDto.getMerchantTimestamp(), createPaymentDto.getSuccessUrl(),
+                createPaymentDto.getFailedUrl(), createPaymentDto.getErrorUrl(), "CREATED"));
     }
 
     @Override
