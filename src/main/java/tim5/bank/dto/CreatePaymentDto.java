@@ -16,7 +16,7 @@ public class CreatePaymentDto {
     private String merchantId; // merchant_id
     private String merchantPassword; // merchant_password
     private double totalAmount; // amount
-    private Long orderId; // merchant_order_id
+    private String orderId; // merchant_order_id
     private LocalDateTime merchantTimestamp;
     private String successUrl;
     private String failedUrl;

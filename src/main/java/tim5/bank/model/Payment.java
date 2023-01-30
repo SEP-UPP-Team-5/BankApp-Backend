@@ -33,7 +33,7 @@ public class Payment {
     private double amount;
 
     @Column(name = "merchant_order_id")
-    private Long merchantOrderId;
+    private String merchantOrderId;
 
     @Column(name = "merchant_timestamp")
     private LocalDateTime merchantTimestamp;

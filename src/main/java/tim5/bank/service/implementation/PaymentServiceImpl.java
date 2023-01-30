@@ -3,7 +3,6 @@ package tim5.bank.service.implementation;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -14,7 +13,6 @@ import tim5.bank.model.*;
 import tim5.bank.repository.PaymentRepository;
 import tim5.bank.service.template.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -110,7 +108,7 @@ public class PaymentServiceImpl implements PaymentService {
         update(payment);
     }
 
-    private void sendUpdateToPsp(Long merchantOrderId, Long acquirerOrderId, LocalDateTime acquirerTimestamp, Long paymentId, String status) {
+    private void sendUpdateToPsp(String merchantOrderId, Long acquirerOrderId, LocalDateTime acquirerTimestamp, Long paymentId, String status) {
         String pspUrl = "http://localhost:8082/orders/create"; // TODO: change to take PSP url from app properties probably
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -126,7 +124,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.postForObject(pspUrl, request, TransactionPspResponse.class);
+//        restTemplate.postForObject(pspUrl, request, TransactionPspResponse.class);
     }
 
     private String executeExternalTransaction(ExecutePaymentDto executePaymentDto, Payment payment) {
