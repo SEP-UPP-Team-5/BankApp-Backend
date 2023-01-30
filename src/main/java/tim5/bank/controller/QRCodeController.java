@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 import tim5.bank.dto.ExecutePaymentDto;
 import tim5.bank.dto.ExecutePaymentResponseDto;
 import tim5.bank.dto.QRCodeInputDto;
+import tim5.bank.model.Payment;
+import tim5.bank.service.template.PaymentService;
 import tim5.bank.service.template.QRCodeService;
 
 import java.io.*;
@@ -27,6 +29,9 @@ import java.util.Map;
 public class QRCodeController {
     @Autowired
     private QRCodeService qrCodeService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     @GetMapping(produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> generateQRCode(@RequestBody QRCodeInputDto dto) throws WriterException, IOException {
@@ -65,6 +70,40 @@ public class QRCodeController {
     public ResponseEntity<String> validateQRCode(@RequestParam("image") MultipartFile file) throws IOException, NotFoundException {
         String data = qrCodeService.validateQR(file);
         return new ResponseEntity<>( data, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{paymentId}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> generateQRCodeByPaymentId(@PathVariable("paymentId") Long paymentId) throws WriterException, IOException {
+        Payment payment = paymentService.getById(paymentId);
+        QRCodeInputDto dto = new QRCodeInputDto(payment.getAmount(), "USD", "123456789", "Anja Pesic",
+                "111123123123", "1111", "Aleksa", LocalDateTime.of(2024, 1, 1, 0, 0), paymentId);
+        String data = dto.getRecipientName() + "\n"
+                + dto.getRecipientAccountNumber() + "\n"
+                + dto.getAmount() + "\n"
+                + dto.getCurrency() + "\n"
+                + dto.getCardHolderName() + "\n"
+                + dto.getSecurityCode() + "\n"
+                + dto.getPan() + "\n"
+                + dto.getValidUntil() + "\n"
+                + dto.getPaymentId();
+        String path = "src/main/resources/image/demo.png";
+        String charset = "UTF-8";
+
+        Map<EncodeHintType, ErrorCorrectionLevel> hashMap
+                = new HashMap<>();
+
+        hashMap.put(EncodeHintType.ERROR_CORRECTION,
+                ErrorCorrectionLevel.L);
+
+        File file = qrCodeService.createQR(data, path, charset, hashMap, 200, 200);
+
+        InputStream targetStream = new FileInputStream(file);
+        byte[] bytes = StreamUtils.copyToByteArray(targetStream);
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(bytes);
     }
 
 }
