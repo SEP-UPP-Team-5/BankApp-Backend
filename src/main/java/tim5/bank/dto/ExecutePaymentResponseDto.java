@@ -13,4 +13,6 @@ public class ExecutePaymentResponseDto {
 
     private String url;
 
+    private String merchantOrderId;
+
 }

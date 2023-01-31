@@ -3,6 +3,7 @@ package tim5.bank.service.implementation;
 import org.codehaus.jettison.json.JSONObject;
 import org.codehaus.jettison.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ public class PaymentServiceImpl implements PaymentService {
     private ExternalTransactionService externalTransactionService;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private Environment env;
 
     private final String ERROR_URL = ""; //TODO:
 
@@ -109,22 +112,26 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void sendUpdateToPsp(String merchantOrderId, Long acquirerOrderId, LocalDateTime acquirerTimestamp, Long paymentId, String status) {
-        String pspUrl = "http://localhost:8082/orders/create"; // TODO: change to take PSP url from app properties probably
+        String pspUrl = env.getProperty("psp.host") + "/paymentInfo/confirmBank";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject obj = new JSONObject();
         try {
-            obj.put("MERCHANT_ORDER_ID", merchantOrderId);
-            obj.put("ACQUIRER_ORDER_ID", acquirerOrderId);
-            obj.put("ACQUIRER_TIMESTAMP", acquirerTimestamp);
-            obj.put("PAYMENT_ID", paymentId);
-            obj.put("STATUS", status);
+            obj.put("merchantOrderId", merchantOrderId);
+            obj.put("acquirerOrderId", acquirerOrderId);
+            obj.put("acquirerTimestamp", acquirerTimestamp);
+            obj.put("paymentId", paymentId);
+            obj.put("status", status);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
-//        restTemplate.postForObject(pspUrl, request, TransactionPspResponse.class);
+        try {
+            restTemplate.postForObject(pspUrl, request, TransactionPspResponse.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private String executeExternalTransaction(ExecutePaymentDto executePaymentDto, Payment payment) {
@@ -167,12 +174,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
         HttpEntity<String> request = new HttpEntity<>(obj.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
-        //try {
+        try{
             return restTemplate.postForObject(pccUrl, request, ExternalTransactionPccResponse.class);
-        //}catch (Exception e){
-        //    e.printStackTrace();
-         //   return null;
-        //}
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private boolean checkExternalTransactionPccResponse(ExternalTransaction externalTransaction, ExternalTransactionPccResponse pccResponse) {

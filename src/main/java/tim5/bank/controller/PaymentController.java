@@ -48,7 +48,7 @@ public class PaymentController {
 
     @PostMapping("/execute")
     public ResponseEntity<ExecutePaymentResponseDto> executePayment(@RequestBody ExecutePaymentDto executePaymentDto){
-        ExecutePaymentResponseDto executePaymentResponseDto = new ExecutePaymentResponseDto(paymentService.execute(executePaymentDto));
+        ExecutePaymentResponseDto executePaymentResponseDto = new ExecutePaymentResponseDto(paymentService.execute(executePaymentDto), paymentService.getById(executePaymentDto.getPaymentId()).getMerchantOrderId());
         return new ResponseEntity<>(executePaymentResponseDto, HttpStatus.OK);
     }
 
@@ -61,7 +61,7 @@ public class PaymentController {
 
         ExecutePaymentDto dto = new ExecutePaymentDto(data.split("\n")[6], data.split("\n")[5], data.split("\n")[4], dateTime, Long.valueOf(Long.parseLong(data.split("\n")[8])));
 
-        ExecutePaymentResponseDto executePaymentResponseDto = new ExecutePaymentResponseDto(paymentService.execute(dto));
+        ExecutePaymentResponseDto executePaymentResponseDto = new ExecutePaymentResponseDto(paymentService.execute(dto), paymentService.getById(dto.getPaymentId()).getMerchantOrderId());
         return new ResponseEntity<>( executePaymentResponseDto, HttpStatus.OK);
     }
 
